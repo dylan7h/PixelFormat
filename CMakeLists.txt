@@ -9,6 +9,7 @@ list(APPEND INC Include)
 list(APPEND CSRC Source/main.c)
 list(APPEND CSRC Source/bitmap.c)
 list(APPEND CSRC Source/image.c)
+list(APPEND CSRC Source/load.c)
 
 
 # list(APPEND LIBS z)
