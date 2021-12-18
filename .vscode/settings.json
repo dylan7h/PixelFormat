@@ -1,0 +1,8 @@
+{
+    "cmake.debugConfig": {
+        "MIMode": "gdb",
+        "args": [
+           
+        ]
+    }
+}
