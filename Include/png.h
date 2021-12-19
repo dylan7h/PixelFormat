@@ -41,22 +41,39 @@
     PNG IHDR Structure
  ***************************************************************************
  */
-#define PNG_IHDR_WIDTH_POS                          (0)
-#define PNG_IHDR_HEIGHT_POS                         (4)
-#define PNG_IHDR_BIT_DEPTH_POS                      (8)
-#define PNG_IHDR_COLOR_TYPE_POS                     (9)
-#define PNG_IHDR_COMPRESSION_METHOD_POS             (10)
-#define PNG_IHDR_FILTER_METHOD_POS                  (11)
-#define PNG_IHDR_INTERLACE_METHOD_POS               (12)
+#define PNG_IHDR_WIDTH_POS                            (0)
+#define PNG_IHDR_HEIGHT_POS                           (4)
+#define PNG_IHDR_BIT_DEPTH_POS                        (8)
+#define PNG_IHDR_COLOR_TYPE_POS                       (9)
+#define     PNG_IHDR_COLOR_TYPE_GRAY                  (0x01)
+#define     PNG_IHDR_COLOR_TYPE_BGR                   (0x02)
+#define     PNG_IHDR_COLOR_TYPE_PALETTE               (0x03)
+#define     PNG_IHDR_COLOR_TYPE_GRAY_ALPHA            (0x04)
+#define     PNG_IHDR_COLOR_TYPE_BGRA                  (0x06)
+#define PNG_IHDR_COMPRESSION_METHOD_POS               (10)
+#define     PNG_IHDR_COMPRESSION_METHOD_INFALTE       (0x00)   /* There is only one compression method */
+#define PNG_IHDR_FILTER_METHOD_POS                    (11)
+#define     PNG_IHDR_FILTER_METHOD_ADAPTIVE           (0x00)   /* There is only one filter method */
+#define PNG_IHDR_INTERLACE_METHOD_POS                 (12)
+#define     PNG_IHDR_INTERLACE_METHOD_SEQUENTIAL      (0x00)   /* no interlaced */
+#define     PNG_IHDR_INTERLACE_METHOD_ADAM7           (0x01)
 
-#define GET_PNG_IHDR_WIDTH(DATA_POS)                *(uint32_t*)((DATA_POS) + PNG_IHDR_WIDTH_POS)
-#define GET_PNG_IHDR_HEIGHT(DATA_POS)               *(uint32_t*)((DATA_POS) + PNG_IHDR_HEIGHT_POS)
-#define GET_PNG_IHDR_BIT_DEPTH(DATA_POS)            *(uint8_t*)((DATA_POS) + PNG_IHDR_BIT_DEPTH_POS)
-#define GET_PNG_IHDR_COLOR_TYPE(DATA_POS)           *(uint8_t*)((DATA_POS) + PNG_IHDR_COLOR_TYPE_POS)
-#define GET_PNG_IHDR_COMPRESSION_METHOD(DATA_POS)   *(uint8_t*)((DATA_POS) + PNG_IHDR_COMPRESSION_METHOD_POS)
-#define GET_PNG_IHDR_FILTER_METHOD(DATA_POS)        *(uint8_t*)((DATA_POS) + PNG_IHDR_FILTER_METHOD_POS)
-#define GET_PNG_IHDR_INTERLACE_METHOD(DATA_POS)     *(uint8_t*)((DATA_POS) + PNG_IHDR_INTERLACE_METHOD_POS)
+/* Filter sub types */
+#define PNG_FILTER_TYPE_NONE		                     (0x00)
+#define PNG_FILTER_TYPE_SUB			                  (0x01)
+#define PNG_FILTER_TYPE_UP			                     (0x02)
+#define PNG_FILTER_TYPE_AVERAGE		                  (0x03)
+#define PNG_FILTER_TYPE_PAETH		                     (0x04)
 
-void PNG_ShowFileInformation(void* png);
+#define GET_PNG_IHDR_WIDTH(DATA_POS)                  *(uint32_t*)((DATA_POS) + PNG_IHDR_WIDTH_POS)
+#define GET_PNG_IHDR_HEIGHT(DATA_POS)                 *(uint32_t*)((DATA_POS) + PNG_IHDR_HEIGHT_POS)
+#define GET_PNG_IHDR_BIT_DEPTH(DATA_POS)              *(uint8_t*)((DATA_POS) + PNG_IHDR_BIT_DEPTH_POS)
+#define GET_PNG_IHDR_COLOR_TYPE(DATA_POS)             *(uint8_t*)((DATA_POS) + PNG_IHDR_COLOR_TYPE_POS)
+#define GET_PNG_IHDR_COMPRESSION_METHOD(DATA_POS)     *(uint8_t*)((DATA_POS) + PNG_IHDR_COMPRESSION_METHOD_POS)
+#define GET_PNG_IHDR_FILTER_METHOD(DATA_POS)          *(uint8_t*)((DATA_POS) + PNG_IHDR_FILTER_METHOD_POS)
+#define GET_PNG_IHDR_INTERLACE_METHOD(DATA_POS)       *(uint8_t*)((DATA_POS) + PNG_IHDR_INTERLACE_METHOD_POS)
+
+void PNG_ShowFileInformation(__IN void* png);
+void PNG_ExportRawData(__IN void* png, __INOUT int32_t* width, __INOUT int32_t* height, __INOUT int32_t* bpp, __INOUT int32_t* stride, __INOUT void** raw, __INOUT int32_t* rawlen);
 
 #endif  //!__PNG__H__

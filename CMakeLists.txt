@@ -13,8 +13,8 @@ list(APPEND CSRC Source/load.c)
 list(APPEND CSRC Source/endian.c)
 list(APPEND CSRC Source/crc.c)
 list(APPEND CSRC Source/png.c)
-list(APPEND CSRC Source/pngcmn.c)
-list(APPEND CSRC Source/pngdecoder.c)
+# list(APPEND CSRC Source/pngcmn.c)
+# list(APPEND CSRC Source/pngdecoder.c)
 
 
 list(APPEND LIBS z)
