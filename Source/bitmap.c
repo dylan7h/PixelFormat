@@ -54,10 +54,10 @@ void BMP_ExtractRawData(__IN void* bitmap, __INOUT SIMPLE_BMP_t* simpleBMP)
     simpleBMP->width    = GET_BMP_INFO_HDR_WIDTH(bitmap);
     simpleBMP->height   = GET_BMP_INFO_HDR_HEIGHT(bitmap);
     simpleBMP->bpp      = GET_BMP_INFO_HDR_BIT_COUNT(bitmap);
-    simpleBMP->padding  = (((simpleBMP->bpp * simpleBMP->width) / 8) % 4);
+    simpleBMP->padding  = (((simpleBMP->bpp * simpleBMP->width) / BYTE_PER_BITS) % BYTE4_ALIGN);
     if(simpleBMP->padding != 0)
     {
-        simpleBMP->padding = 4 - simpleBMP->padding;
+        simpleBMP->padding = BYTE4_ALIGN - simpleBMP->padding;
         printf("  - padding : %d\n", simpleBMP->padding);
     }
     simpleBMP->stride   = ((simpleBMP->bpp * simpleBMP->width) / 8) + simpleBMP->padding;
@@ -66,18 +66,17 @@ void BMP_ExtractRawData(__IN void* bitmap, __INOUT SIMPLE_BMP_t* simpleBMP)
     if(GET_BMP_FILE_HDR_OFFSET(bitmap) > (BMP_INFO_HDR_OFFSET + GET_BMP_INFO_HDR_LENGTH(bitmap)))
     {
         uint8_t*                palette;
-        const static  int32_t   newBpp = 24;
         int32_t                 newPadiing;
         int32_t                 newStride;
 
         palette     = bitmap + BMP_INFO_HDR_OFFSET + GET_BMP_INFO_HDR_LENGTH(bitmap);
-        newPadiing  = (((newBpp * simpleBMP->width) / 8) % 4);
+        newPadiing  = (((BPP24 * simpleBMP->width) / BYTE_PER_BITS) % BYTE4_ALIGN);
         if(newPadiing != 0)
         {
-            newPadiing = 4 - newPadiing;
+            newPadiing = BYTE4_ALIGN - newPadiing;
             printf("  - new padding : %d\n", newPadiing);
         }
-        newStride = ((newBpp * simpleBMP->width) / 8) + newPadiing;
+        newStride = ((BPP24 * simpleBMP->width) / BYTE_PER_BITS) + newPadiing;
 
         printf("new padiing: %d\n", newPadiing);
         printf("palette size: %d\n", GET_BMP_FILE_HDR_OFFSET(bitmap) - (BMP_INFO_HDR_OFFSET + GET_BMP_INFO_HDR_LENGTH(bitmap)));
@@ -86,31 +85,33 @@ void BMP_ExtractRawData(__IN void* bitmap, __INOUT SIMPLE_BMP_t* simpleBMP)
         simpleBMP->raw      = malloc(simpleBMP->imgLen);
         assert(simpleBMP->raw != NULL);
 
-        int32_t row, col, offset;
+        int32_t row, col;
         uint8_t* dst;
         uint8_t* src;
+        uint8_t idx;
         for(row = 0; row < simpleBMP->height; row++)
         {
             for(col = 0; col < simpleBMP->width; col++)
             {
-                dst = (uint8_t*)(simpleBMP->raw + (((simpleBMP->height - 1) - row) * newStride) + (col * (newBpp / 8)));
+                dst = (uint8_t*)(simpleBMP->raw + (((simpleBMP->height - 1) - row) * newStride) + (col * (BPP24 / BYTE_PER_BITS)));
+                src = (uint8_t*)((bitmap + GET_BMP_FILE_HDR_OFFSET(bitmap)) + (row * simpleBMP->stride) + ((col * simpleBMP->bpp) / BYTE_PER_BITS));
                 switch (simpleBMP->bpp)
                 {
                     case 1:
-                        /* code */
+                        idx = ((*src) >> ( col % 8 ))  & 0x01;
                     break;
 
                     case 2:
-                        /* code */
+                        idx = ((*src) >> ( ( col % 4 ) * 2 ))  & 0x03;
                     break;
 
                     case 4:
-                        /* code */
+                        idx = ((*src) >> ( ( col % 2 ) * 4 ))  & 0x0f;
                     break;
 
                     case 8:
                     case 16:
-                        src = (uint8_t*)((bitmap + GET_BMP_FILE_HDR_OFFSET(bitmap)) + (row * simpleBMP->stride) + ((col * simpleBMP->bpp) / 8));
+                        idx = *src;
                     break;
                 
                     default:
@@ -118,9 +119,9 @@ void BMP_ExtractRawData(__IN void* bitmap, __INOUT SIMPLE_BMP_t* simpleBMP)
                     break;
                 }
                 
-                dst[0] = *(palette + (*src * 4) + 0);
-                dst[1] = *(palette + (*src * 4) + 1);
-                dst[2] = *(palette + (*src * 4) + 2);
+                dst[0]  = *(palette + (idx * 4) + 0);
+                dst[1]  = *(palette + (idx * 4) + 1);
+                dst[2]  = *(palette + (idx * 4) + 2);
             }
         }
 

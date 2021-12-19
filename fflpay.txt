@@ -1,0 +1,18 @@
+[ play ]
+ffplay -video_size 1280x720 -pixel_format bgra Resource/bgra_1280x720.raw
+ffplay -video_size 1277x720 -pixel_format bgr24 Resource/bgr24_1277x720.raw
+ffplay -video_size 1277x720 -pixel_format bgr24 Resource/bgr_16bpp_1277x720.raw
+ffplay -video_size 1277x720 -pixel_format bgr24 Resource/bgr_4bpp_1277x720.raw
+ffplay -video_size 1277x720 -pixel_format bgr24 Resource/bgr_1bpp_1277x720.raw
+
+ffplay -video_size 1280x720 -pixel_format bgra bgra_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format bgra bgr24_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format bgr565le bgr565le_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format bgr555le bgr555le_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format bgr565be bgr565be_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format bgr555be bgr555be_1280x720.raw
+
+[ convert ]
+ffmpeg -i hsv_1280x720_alpha.png -f rawvideo -pix_fmt bgr565be bgr565be.raw
+ffmpeg -i hsv_1280x720_alpha.png -f rawvideo -pix_fmt yuyv422 yuyv422.raw
+ffmpeg -i hsv_1280x720_alpha.png -f rawvideo -pix_fmt yuv422p yuv422p.raw

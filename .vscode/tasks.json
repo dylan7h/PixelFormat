@@ -4,9 +4,39 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "echo",
+            "label": "ffplay",
             "type": "shell",
-            "command": "echo Hello"
+            "command": "ffplay",
+            "args": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ],
+    "inputs": [
+        {
+            "id": "pixel_fmt",
+            "description": "type of pixel format",
+            "default": "bgr24",
+            "type": "pickString",
+            "options": [
+                "bgra",
+                "bgr24"
+            ]
+        },
+        {
+            "id": "file_name",
+            "description": "name of raw file",
+            "default": "hsv_1280x720_alpha.raw",
+            "type": "pickString",
+            "options": [
+                "hsv_1280x720_alpha.raw",
+                "BGR24_1277x720.raw",
+                "BGR_16bpp_1277x720.raw",
+                "BGR_4bpp_1277x720.raw"
+            ]
         }
     ]
 }
