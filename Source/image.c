@@ -196,42 +196,232 @@ void IMG_MakeBGR24toBGR555be(   __IN int32_t width, __IN int32_t height, __IN in
 void IMG_MakeBGR24toYUV444( __IN int32_t width, __IN int32_t height, __IN int32_t stride, __IN void* bgr24, 
                             __INOUT void** yuv444, __INOUT int32_t* yuv444len)
 {
+    *yuv444len = width * height * (BPP24 / BYTE_PER_BITS);
+    *yuv444 = malloc(*yuv444len);
+    assert((*yuv444) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dst;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(bgr24 + (row * stride) + (col * (BPP24 / BYTE_PER_BITS)));
+            dst = (uint8_t*)((*yuv444) + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            /* 
+                Y = ( (  66 * R + 129 * G +  25 * B + 128) >> 8) +  16
+                U = ( ( -38 * R -  74 * G + 112 * B + 128) >> 8) + 128
+                V = ( ( 112 * R -  94 * G -  18 * B + 128) >> 8) + 128 
+            */
+            dst[0] = ( (  66 * src[2] + 129 * src[1] +  25 * src[0] + 128) >> 8) +  16;
+            dst[1] = ( ( -38 * src[2] -  74 * src[1] + 112 * src[0] + 128) >> 8) + 128;
+            dst[2] = ( ( 112 * src[2] -  94 * src[1] -  18 * src[0] + 128) >> 8) + 128;
+        }
+    }
 }
 
 void IMG_MakeYUV444toYUV444p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                                 __INOUT void** yuv444p, __INOUT int32_t* yuv444plen)
 {
+    *yuv444plen = width * height * (BPP24 / BYTE_PER_BITS);
+    *yuv444p = malloc(*yuv444plen);
+    assert((*yuv444p) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dstY;
+    uint8_t* dstU;
+    uint8_t* dstV;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src     = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dstY    = (uint8_t*)((*yuv444p) + (row * width) + col);
+            dstU    = dstY + (width * height);
+            dstV    = dstU + (width * height);
+           
+           *dstY    = src[0];
+           *dstU    = src[1];
+           *dstV    = src[2];
+        }
+    }
 }
 
-void IMG_MakeYUV444toYUV422(    __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
-                                __INOUT void** yuv422, __INOUT int32_t* yuv422len)
+void IMG_MakeYUV444toYUYV422(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
+                                __INOUT void** yuyv422, __INOUT int32_t* yuyv422len)
 {
+    *yuyv422len = ((BPP16 / BYTE_PER_BITS) * width) * height;
+    *yuyv422 = malloc(*yuyv422len);
+    assert((*yuyv422) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dst;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dst = (uint8_t*)((*yuyv422) + (row * (width * (BPP16 / BYTE_PER_BITS))) + (col * (BPP16 / BYTE_PER_BITS)));
+
+            dst[0] = src[0];        /* Y */
+            if((col % 2) == 0)
+            {
+                dst[1] = src[1];    /* U */
+            }
+            else
+            {
+                src = src - (BPP24 / BYTE_PER_BITS);
+                dst[1] = src[2];    /* V */
+            }
+        }
+    }
 }
 
 void IMG_MakeYUV444toYUV422p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                                 __INOUT void** yuv422p, __INOUT int32_t* yuv422plen)
 {
+    *yuv422plen = ((BPP16 / BYTE_PER_BITS) * width) * height;
+    *yuv422p = malloc(*yuv422plen);
+    assert((*yuv422p) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dstY;
+    uint8_t* dstU;
+    uint8_t* dstV;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dstY = (uint8_t*)((*yuv422p) + (row * width) + col);
+
+            *dstY = src[0];         /* Y */
+            if((col % 2) == 0)
+            {
+                dstU = (uint8_t*)((*yuv422p) + (width * height) + ((width / 2) * row) + (col / 2));
+                *dstU = src[1];     /* U */
+            }
+            else
+            {
+                src     = src - (BPP24 / BYTE_PER_BITS);
+                dstV    = (uint8_t*)((*yuv422p) + (width * height) + ((width / 2) * height)  + ((width / 2) * row) + (col / 2));
+                *dstV   = src[2];   /* V */
+            }
+        }
+    }
 }
 
 void IMG_MakeYUV444toYUV420p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                                 __INOUT void** yuv420p, __INOUT int32_t* yuv420plen)
 {
+    *yuv420plen = ((BPP16 / BYTE_PER_BITS) * width) * height;
+    *yuv420p = malloc(*yuv420plen);
+    assert((*yuv420p) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dstY;
+    uint8_t* dstU;
+    uint8_t* dstV;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dstY = (uint8_t*)((*yuv420p) + (row * width) + col);
+
+            *dstY = src[0];             /* Y */
+            if((row % 2) == 0)
+            {
+                if((col % 2) == 0)
+                {
+                    dstU    = (uint8_t*)((*yuv420p) + (width * height) + ((width / 2) * (row / 2)) + (col / 2));
+                    *dstU   = src[1];   /* U */
+                }
+                else
+                {
+                    src     = src - (BPP24 / BYTE_PER_BITS);
+                    dstV    = (uint8_t*)((*yuv420p) + (width * height) + ((width / 2) * (height / 2))  + ((width / 2) * (row / 2)) + (col / 2));
+                    *dstV   = src[2];   /* V */
+                }
+            }
+        }
+    }
 }
 
 void IMG_MakeYUV444toNV12(  __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                             __INOUT void** nv12, __INOUT int32_t* nv12len)
 {
+    *nv12len = ((BPP16 / BYTE_PER_BITS) * width) * height;
+    *nv12 = malloc(*nv12len);
+    assert((*nv12) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dstY;
+    uint8_t* dstUV;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dstY = (uint8_t*)((*nv12) + (row * width) + col);
+
+            *dstY               = src[0];   /* Y */
+            if((row % 2) == 0)
+            {
+                dstUV = (uint8_t*)((*nv12) + (width * height) + (width * (row / 2)) + col);
+                if((col % 2) == 0)
+                {
+                    *dstUV      = src[1];   /* U */
+                }
+                else
+                {
+                    src         = src - (BPP24 / BYTE_PER_BITS);
+                    *dstUV      = src[2];   /* V */
+                }
+            }
+        }
+    }
 }
 
 void IMG_MakeYUV444toNV21(  __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                             __INOUT void** nv21, __INOUT int32_t* nv21len)
 {
+    *nv21len = ((BPP16 / BYTE_PER_BITS) * width) * height;
+    *nv21 = malloc(*nv21len);
+    assert((*nv21) != NULL);
 
+    int32_t row, col;
+    uint8_t* src;
+    uint8_t* dstY;
+    uint8_t* dstUV;
+    for(row = 0; row < height; row++)
+    {
+        for(col = 0; col < width; col++)
+        {
+            src = (uint8_t*)(yuv444 + (row * (width * (BPP24 / BYTE_PER_BITS))) + (col * (BPP24 / BYTE_PER_BITS)));
+            dstY = (uint8_t*)((*nv21) + (row * width) + col);
+
+            *dstY               = src[0];   /* Y */
+            if((row % 2) == 0)
+            {
+                dstUV = (uint8_t*)((*nv21) + (width * height) + (width * (row / 2)) + col);
+                if((col % 2) != 0)
+                {
+                    *dstUV      = src[1];   /* U */
+                }
+                else
+                {
+                    src         = src - (BPP24 / BYTE_PER_BITS);
+                    *dstUV      = src[2];   /* V */
+                }
+            }
+        }
+    }
 }
 

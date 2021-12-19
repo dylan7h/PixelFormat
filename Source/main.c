@@ -110,5 +110,67 @@ int main(int argc, char* argv[])
     saveFile(path, bgr555be, bgr555belen);
     SAFE_FREE(bgr555be);
 
+    /* bgr24_1280x720.raw to yuv444_1280x720.raw */
+    int32_t yuv444len;
+    void*   yuv444;
+    IMG_MakeBGR24toYUV444(  bgra.width, bgra.height, bgr24stride, bgr24,
+                            &yuv444, &yuv444len);
+    sprintf(path, "%s/%s", argv[1], "yuv444_1280x720.raw");
+    saveFile(path, yuv444, yuv444len);
+
+    /* yuv444_1280x720.raw to yuv444p_1280x720.raw */
+    int32_t yuv444plen;
+    void*   yuv444p;
+    IMG_MakeYUV444toYUV444p(  bgra.width, bgra.height, yuv444,
+                            &yuv444p, &yuv444plen);
+    sprintf(path, "%s/%s", argv[1], "yuv444p_1280x720.raw");
+    saveFile(path, yuv444p, yuv444plen);
+    SAFE_FREE(yuv444p);
+
+    /* yuv444_1280x720.raw to yuyv422_1280x720.raw */
+    int32_t yuyv422len;
+    void*   yuyv422;
+    IMG_MakeYUV444toYUYV422(bgra.width, bgra.height, yuv444,
+                            &yuyv422, &yuyv422len);
+    sprintf(path, "%s/%s", argv[1], "yuyv422_1280x720.raw");
+    saveFile(path, yuyv422, yuyv422len);
+    SAFE_FREE(yuyv422);
+
+    /* yuv444_1280x720.raw to yuv422p_1280x720.raw */
+    int32_t yuv422plen;
+    void*   yuv422p;
+    IMG_MakeYUV444toYUV422p(bgra.width, bgra.height, yuv444,
+                            &yuv422p, &yuv422plen);
+    sprintf(path, "%s/%s", argv[1], "yuv422p_1280x720.raw");
+    saveFile(path, yuv422p, yuv422plen);
+    SAFE_FREE(yuv422p);
+
+    /* yuv444_1280x720.raw to yuv420p_1280x720.raw */
+    int32_t yuv420plen;
+    void*   yuv420p;
+    IMG_MakeYUV444toYUV420p(bgra.width, bgra.height, yuv444,
+                            &yuv420p, &yuv420plen);
+    sprintf(path, "%s/%s", argv[1], "yuv420p_1280x720.raw");
+    saveFile(path, yuv420p, yuv420plen);
+    SAFE_FREE(yuv420p);
+
+    /* yuv444_1280x720.raw to nv12_1280x720.raw */
+    int32_t nv12len;
+    void*   nv12;
+    IMG_MakeYUV444toNV12(bgra.width, bgra.height, yuv444,
+                            &nv12, &nv12len);
+    sprintf(path, "%s/%s", argv[1], "nv12_1280x720.raw");
+    saveFile(path, nv12, nv12len);
+    SAFE_FREE(nv12);
+
+    /* yuv444_1280x720.raw to nv21_1280x720.raw */
+    int32_t nv21len;
+    void*   nv21;
+    IMG_MakeYUV444toNV21(bgra.width, bgra.height, yuv444,
+                            &nv21, &nv21len);
+    sprintf(path, "%s/%s", argv[1], "nv21_1280x720.raw");
+    saveFile(path, nv21, nv21len);
+    SAFE_FREE(nv21);
+
     return 0;
 }

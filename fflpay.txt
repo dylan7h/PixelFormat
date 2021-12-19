@@ -12,6 +12,14 @@ ffplay -video_size 1280x720 -pixel_format bgr555le bgr555le_1280x720.raw
 ffplay -video_size 1280x720 -pixel_format bgr565be bgr565be_1280x720.raw
 ffplay -video_size 1280x720 -pixel_format bgr555be bgr555be_1280x720.raw
 
+ffplay -video_size 1280x720 -pixel_format yuv444p yuv444p_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format yuyv422 yuyv422_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format yuv422p yuv422p_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format yuv420p yuv420p_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format nv12 nv12_1280x720.raw
+ffplay -video_size 1280x720 -pixel_format nv21 nv21_1280x720.raw
+
+
 [ convert ]
 ffmpeg -i hsv_1280x720_alpha.png -f rawvideo -pix_fmt bgr565be bgr565be.raw
 ffmpeg -i hsv_1280x720_alpha.png -f rawvideo -pix_fmt yuyv422 yuyv422.raw

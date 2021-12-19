@@ -20,8 +20,8 @@ void IMG_MakeBGR24toYUV444( __IN int32_t width, __IN int32_t height, __IN int32_
                             __INOUT void** yuv444, __INOUT int32_t* yuv444len);
 void IMG_MakeYUV444toYUV444p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                                 __INOUT void** yuv444p, __INOUT int32_t* yuv444plen);
-void IMG_MakeYUV444toYUV422(    __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
-                                __INOUT void** yuv422, __INOUT int32_t* yuv422len);
+void IMG_MakeYUV444toYUYV422(    __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
+                                __INOUT void** yuyv422, __INOUT int32_t* yuyv422len);
 void IMG_MakeYUV444toYUV422p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
                                 __INOUT void** yuv422p, __INOUT int32_t* yuv422plen);
 void IMG_MakeYUV444toYUV420p(   __IN int32_t width, __IN int32_t height, __IN void* yuv444, 
