@@ -5,6 +5,7 @@
 #include "load.h"
 #include "bitmap.h"
 #include "image.h"
+#include "png.h"
 
 int main(int argc, char* argv[]) 
 {
@@ -171,6 +172,13 @@ int main(int argc, char* argv[])
     sprintf(path, "%s/%s", argv[1], "nv21_1280x720.raw");
     saveFile(path, nv21, nv21len);
     SAFE_FREE(nv21);
+
+    /* PNG Load */
+    void*   pPng;
+    int32_t FileSize;
+    sprintf(path, "%s/%s", argv[1], "bgra_1280x720.png");
+    loadFile(path, &pPng, &FileSize);
+    PNG_ShowFileInformation(pPng);
 
     return 0;
 }
