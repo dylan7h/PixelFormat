@@ -95,34 +95,20 @@ void PNG_ExportRawData(__IN void* png, __INOUT int32_t* width, __INOUT int32_t* 
             *height = EndianSwap32(GET_PNG_IHDR_HEIGHT(pData));
             *bpp    = (int32_t)GET_PNG_IHDR_BIT_DEPTH(pData);
 
-            printf("    > Width              : %u\n", EndianSwap32(GET_PNG_IHDR_WIDTH(pData)));
-            printf("    > Height             : %u\n", EndianSwap32(GET_PNG_IHDR_HEIGHT(pData)));
-            printf("    > Bit Depth          : %u bit\n", GET_PNG_IHDR_BIT_DEPTH(pData));
-            printf("    > Color Type         : %s\n", lpszColorType[ GET_PNG_IHDR_COLOR_TYPE(pData) ]);
-            printf("    > Compression Method : %u\n", GET_PNG_IHDR_COMPRESSION_METHOD(pData));
-            printf("    > Filter Method      : %s\n", lpszFilterType[ GET_PNG_IHDR_FILTER_METHOD(pData) ]);
-            printf("    > Interlace Method   : %s\n", lpszInterlaceType [ GET_PNG_IHDR_INTERLACE_METHOD(pData) ]);
+            // printf("    > Width              : %u\n", EndianSwap32(GET_PNG_IHDR_WIDTH(pData)));
+            // printf("    > Height             : %u\n", EndianSwap32(GET_PNG_IHDR_HEIGHT(pData)));
+            // printf("    > Bit Depth          : %u bit\n", GET_PNG_IHDR_BIT_DEPTH(pData));
+            // printf("    > Color Type         : %s\n", lpszColorType[ GET_PNG_IHDR_COLOR_TYPE(pData) ]);
+            // printf("    > Compression Method : %u\n", GET_PNG_IHDR_COMPRESSION_METHOD(pData));
+            // printf("    > Filter Method      : %s\n", lpszFilterType[ GET_PNG_IHDR_FILTER_METHOD(pData) ]);
+            // printf("    > Interlace Method   : %s\n", lpszInterlaceType [ GET_PNG_IHDR_INTERLACE_METHOD(pData) ]);
         }
         
-        if (GET_PNG_CHUNK_TYPE(pChunk) == PNG_CHUNK_TYPE_sRGB)
-        {
-            static const char* lpszRenderingIntent[] = {
-                "(0) - Perceptual",
-                "(1) - Relative colorimetric",
-                "(2) - Saturation",
-                "(3) - Absolute colorimetric",
-            };
-            printf("    > Rendering Intent   : %s\n", lpszRenderingIntent[ *(uint8_t*)pData ]);
-        }
-
         if (GET_PNG_CHUNK_TYPE(pChunk) == PNG_CHUNK_TYPE_pHYs)
         {
-            printf("    > Pixels per unit, X axis : %u\n", EndianSwap32(*((uint32_t*)pData)));
-            printf("    > Pixels per unit, Y axis : %u\n", EndianSwap32(*((uint32_t*)(pData + 4))));
-            printf("    > Unit specifier          : unit is %s\n", *((uint8_t*)(pData + 8)) ? "the meter (1)" : "unknown (0)");
+            // printf("    > Pixels per unit, X axis : %u\n", EndianSwap32(*((uint32_t*)pData)));
+            // printf("    > Pixels per unit, Y axis : %u\n", EndianSwap32(*((uint32_t*)(pData + 4))));
+            // printf("    > Unit specifier          : unit is %s\n", *((uint8_t*)(pData + 8)) ? "the meter (1)" : "unknown (0)");
         }
-
-        printf("Calc CRC    : %08x\n", EndianSwap32( (uint32_t)crc((uint8_t*)chChunkType, 4 + (int32_t)EndianSwap32(GET_PNG_CHUNK_SIZE(pChunk))) ));
-        printf("CRC         : %08x\n\n", GET_PNG_CHUNK_CRC(pChunk));
     }
 }
